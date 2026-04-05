@@ -69,11 +69,11 @@ userSchema.methods.generateAccessToken = async function () {
         _id: this._id,
         username: this.username,
         email: this.email,
-        fullname: this.fullName
+        fullName: this.fullName
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-        eapiresIn: process.env.ACCESS_TOKEN_EXPIRY
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRY
     }
 )
 }
@@ -84,7 +84,7 @@ userSchema.methods.generateRefreshToken = async function () {
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
-        eapiresIn: process.env.REFRESH_TOKEN_EXPIRY
+        expiresIn: process.env.REFRESH_TOKEN_EXPIRY
     }
 )
 }

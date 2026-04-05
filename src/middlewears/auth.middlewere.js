@@ -3,9 +3,11 @@ import { asyncHandeler } from "../utils/asyncHandeler";
 import jwt from "jsonwebtoken"
 import { User } from "../models/user.model";
 
-export const  varifyJWT = asyncHandeler( async(req, resizeBy, next) => {
+// export const  varifyJWT = asyncHandeler( async(req, resizeBy, next) => {
+
+export const  varifyJWT = asyncHandeler( async(req, res, next) => {
     try {
-        req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
+        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
     
         if(!token) {
             throw new apiError(401, "Unathorized request")
@@ -18,7 +20,7 @@ export const  varifyJWT = asyncHandeler( async(req, resizeBy, next) => {
         req.user = user;
         next()
     } catch (error) {
-        throw new apiError(401, error?.messege || "Invelid access token")
+        throw new apiError(401, error?.message || "Invelid access token")
         
     }
 

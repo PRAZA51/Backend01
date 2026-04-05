@@ -22,14 +22,6 @@ connectDB()
     console.log("MONGODB CONNECTION FAILS !", err)
 } );
 
-
-
-
-
-
-
-
-
 /*
 FIRST METHODE TO CONNECT DATABASE (MESSI)
 

@@ -215,7 +215,7 @@ const refreshAccessToken = asyncHandeler( async (req, res) => {
         return res
         .status(200)
         .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", newRefreshTokenefreshToken, options)
+        .cookie("refreshToken", newRefreshToken, options)
         .json(
             new apiResponse(
                 200, {accessToken, newRefreshToken}, "Access Token refreshed"
@@ -357,13 +357,32 @@ const getUserChannelProfile = asyncHandeler(async(req, res) => {
                 channelsSubscribedToCount: {
                     $size: "$subscribedTo"
                 },
+                // isSubscribed: {
+                //     $cond: {
+                //         if: {$in: [req.user?._id, "$subscribers.subscriber"]},
+                //         then: true,
+                //         else: false
+                //     }
+                // }
+
                 isSubscribed: {
-                    $cond: {
-                        if: {$in: [req.user?._id, "$subscribers.subscriber"]},
-                        then: true,
-                        else: false
+                       $cond: {
+                          if: {
+                             $in: [
+                               req.user?._id,
+                             {
+                    $map: {
+                        input: "$subscribers",
+                        as: "sub",
+                        in: "$$sub.subscriber"
                     }
                 }
+            ]
+        },
+        then: true,
+        else: false
+    }
+}
 
             }
         },
@@ -431,11 +450,25 @@ const getWatchHistory = asyncHandeler(async(req, res) => {
         }
     ])
 
-    return res
-    .status(200)
-    .json(
-        new apiResponse(200, user[0].watchHistory, "watch history fetched successfully")
+    // return res
+    // .status(200)
+    // .json(
+    //     new apiResponse(200, user[0].watchHistory, "watch history fetched successfully")
+    // )
+
+    if (!user?.length) {
+    throw new apiError(404, "User not found");
+}
+
+return res
+.status(200)
+.json(
+    new apiResponse(
+        200,
+        user[0].watchHistory || [],
+        "Watch history fetched successfully"
     )
+);
 })
 
 export {
